@@ -30,7 +30,9 @@
     </script>
 </head>
 <body>
-<h1 style="position: relative; text-align: center; padding-top: 40px">Instance Management</h1>
+
+    <h1 style="position: relative; text-align: center; padding-top: 40px"><a href="/get" style="text-decoration: none">Instance Management</a></h1>
+
 <div class="container" style="padding-top: 50px;">
     <div class="row">
         <div class="col">
