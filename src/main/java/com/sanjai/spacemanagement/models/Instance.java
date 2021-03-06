@@ -13,6 +13,7 @@ public class Instance {
     @Value("${some.key:false}")
     private boolean state;
 
+
     public boolean isState() {
         return state;
     }

@@ -6,19 +6,13 @@ import com.sanjai.spacemanagement.models.Instance;
 import com.sanjai.spacemanagement.models.InstanceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootApplication(scanBasePackages={"com.sanjai.spacemanagement", "com.sanjai.spacemanagement.dao"})
 @Controller
@@ -29,7 +23,7 @@ public class InstanceController {
     @Autowired
     InstanceDetailsRepo detailsRepo;
 
-    public int autoinc=0;
+    private int autoinc=0;
 
     @RequestMapping(value="/get")  // Display all fields in the page
     public ModelAndView getInstance()
@@ -61,22 +55,6 @@ public class InstanceController {
         return "/get";
     }
 
-
-
-//    @PutMapping("/put")   // modify or create an instance
-//    public Instance putInstance(Instance instance){
-//        if (instance.isState()==true){
-//            InstanceDetails inst=new InstanceDetails(instance.getId(),"In","name");
-//            detailsRepo.save(inst);
-//
-//        }
-//        else if(instance.isState()==false){
-//            InstanceDetails inst=new InstanceDetails(instance.getId(),"Out","name");
-//            detailsRepo.save(inst);
-//        }
-//        instrepo.save(instance);
-//        return instance;
-//    }
     @RequestMapping(path = "put/{id}")
     public ModelAndView releaseInstance(@PathVariable("id") String id, ModelMap model) {
         Instance instance = instrepo.findById(Integer.parseInt(id)).orElse(null);
@@ -92,7 +70,7 @@ public class InstanceController {
         }
         instrepo.save(instance);
         autoinc++;
-        InstanceDetails inst=new InstanceDetails(autoinc,id,purpose,"name");
+        InstanceDetails inst=new InstanceDetails(autoinc,id,purpose,"Person X");
         detailsRepo.save(inst);
         ModelAndView mv = new ModelAndView("redirect:/get", model);
         return mv;
@@ -122,35 +100,21 @@ public class InstanceController {
     }
 
     @PostMapping("/search/{name}")
-    public ModelAndView searchInstance(@PathVariable String name){
-        ModelAndView mv= new ModelAndView();
+    public ModelAndView searchInstance(@PathVariable String name) {
+        ModelAndView mv = new ModelAndView();
         System.out.println(name);
-        if (name!=null) {
+        if (name != null) {
             List<Instance> inst = instrepo.search(name);
             System.out.println(inst.size());
-            mv.addObject("data",inst);
+            mv.addObject("data", inst);
             mv.setViewName("/home.jsp");
             return mv;
-        }
-        else{
+        } else {
             List<Instance> inst = instrepo.findAll();
             System.out.println("HELLO");
-            mv.addObject("data",inst);
+            mv.addObject("data", inst);
             mv.setViewName("/home.jsp");
             return mv;
         }
     }
-
-//    @RequestMapping ("/get/{id}")    //get detail of a particular instance
-//    public Optional<Instance> getInstancebyId(@PathVariable("id") Integer id){
-//        return instrepo.findById(id);
-//    }
-//    @GetMapping("usage/{name}")
-//    public List<InUsage> getUsages(@PathVariable("name") String name){
-//
-//        Pageable firstPageWithTenProducts=PageRequest.of(0, 10,Sort.by("id").descending());
-//        List<InUsage> usages=usageRepo.findAllByinstancename(name,firstPageWithTenProducts);
-//        return usages;
-//
-//    }
 }
